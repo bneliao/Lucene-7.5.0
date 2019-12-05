@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="211945b1-10ca-4220-bbb9-740b39663c75" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../LuceneDemo/src/main/java/lucene/compress/DirectWriterDirectReader/DirectWriterDirectReaderTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../LuceneDemo/src/main/java/lucene/query/MoreLikeThisTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../LuceneDemo/src/main/java/lucene/index/PointValuesTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../LuceneDemo/src/main/java/lucene/index/PointValuesTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LuceneDemo/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../LuceneDemo/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lucene/core/src/java/org/apache/lucene/index/IndexFileDeleter.java" beforeDir="false" afterPath="$PROJECT_DIR$/lucene/core/src/java/org/apache/lucene/index/IndexFileDeleter.java" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -51,7 +49,13 @@
     <option name="version" value="1" />
   </component>
   <component name="ProjectId" id="1Oj4gAaWRDYYIVKmiCCORirrvPv" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
@@ -67,18 +71,6 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="reference.settings.project.statistic.project.settings" />
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager">
     <configuration name="LockVerifyServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -99,6 +91,18 @@
         <item itemvalue="Application.LockVerifyServer" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
   </component>
   <component name="StructureViewFactory">
     <option name="ACTIVE_ACTIONS" value=",ALPHA_COMPARATOR" />
@@ -234,6 +238,11 @@
       <workItem from="1569562748330" duration="1057000" />
       <workItem from="1570785122258" duration="184000" />
       <workItem from="1571016868954" duration="443000" />
+      <workItem from="1572232335020" duration="199000" />
+      <workItem from="1572404746166" duration="873000" />
+      <workItem from="1572579485086" duration="93000" />
+      <workItem from="1573474848827" duration="200000" />
+      <workItem from="1575366370034" duration="416000" />
     </task>
     <servers />
   </component>
@@ -261,6 +270,16 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="689" y="421" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1575366395132">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="689" y="421" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1575366395132" />
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1575366390054">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1575366390054" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

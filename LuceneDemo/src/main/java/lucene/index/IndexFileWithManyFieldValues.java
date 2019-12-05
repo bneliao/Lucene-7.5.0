@@ -2,16 +2,20 @@ package lucene.index;
 
 import io.FileOperation;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.cjk.CJKAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.InfoStream;
+import org.apache.lucene.util.fst.NoOutputs;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Random;
+import java.util.function.Supplier;
 
 /**
  * @author Lu Xugang
@@ -21,7 +25,7 @@ public class IndexFileWithManyFieldValues {
   private Directory directory ;
   private Directory directory2;
   private Directory directory3;
-  private Analyzer analyzer = new WhitespaceAnalyzer();
+  private Analyzer analyzer = new CJKAnalyzer();
   private IndexWriterConfig conf = new IndexWriterConfig(analyzer);
   private IndexWriter indexWriter;
   private PersistentSnapshotDeletionPolicy persistentSnapshotDeletionPolicy;
@@ -29,26 +33,41 @@ public class IndexFileWithManyFieldValues {
 
   {
     try {
+//      FileOperation.deleteFile("./data2");
       FileOperation.deleteFile("./data");
-//      FileOperation.deleteFile("./data1");
 //      directory3 = FSDirectory.open(Paths.get("./data01"));
 //      directory2 = FSDirectory.open(Paths.get("./data02"));
 //      Set<String> primaryExtensions = new HashSet<>();
 //      primaryExtensions.add("fdx");
 //      primaryExtensions.add("fdt");
 //      primaryExtensions.add("nvd");
+//      primaryExtensions.add("nvd");
 //      primaryExtensions.add("nvm");
 //      directory = new FileSwitchDirectory(primaryExtensions, directory3, directory2, true);
       directory = FSDirectory.open(Paths.get("./data"));
-      conf.setUseCompoundFile(false);
+//      directory = FSDirectory.open(Paths.get("./data1"));
+      conf.setUseCompoundFile(true);
+//      conf.setSoftDeletesField("title");
+      conf.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
 //      persistentSnapshotDeletionPolicy = new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), directory);
 //      snapshotDeletionPolicy = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
 //      conf.setIndexDeletionPolicy(persistentSnapshotDeletionPolicy);
 //      conf.setIndexDeletionPolicy(snapshotDeletionPolicy);
-//      conf.setIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
+      conf.setIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
+      conf.setMergePolicy(NoMergePolicy.INSTANCE);
 //      conf.setMergePolicy(NoMergePolicy.INSTANCE);
+      Supplier<Query> docsOfLast24Hours = () -> LongPoint.newRangeQuery("creation_date", 23, 48);
+//      conf.setMergePolicy(new LogDocMergePolicy());
+//      conf.setMergePolicy(new SoftDeletesRetentionMergePolicy("title", docsOfLast24Hours,
+//              new LogDocMergePolicy()));
 //      conf.setSoftDeletesField("docValuesField");
 //      conf.setIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
+      InfoStream infoStream = InfoStream.NO_OUTPUT;
+      conf.setMergedSegmentWarmer(new SimpleMergedSegmentWarmer(infoStream));
+      conf.setCommitOnClose(false);
+      SortField indexSortField = new SortField("age", SortField.Type.LONG);
+      Sort indexSort = new Sort(indexSortField);;
+//    conf.setIndexSort(indexSort);
       indexWriter = new IndexWriter(directory, conf);
 //      directory = new NIOFSDirectory(Paths.get("./data"));
     } catch (IOException e) {
@@ -73,71 +92,57 @@ public class IndexFileWithManyFieldValues {
 
     int count = 0;
     Document doc;
-    while (count++ < 1) {
-      // 文档0
-      doc = new Document();
-      doc.add(new Field("author", "Lucy", type));
-      doc.add(new Field("title", "notCare", type));
-      doc.add(new NumericDocValuesField("sortByNumber", -1));
-      indexWriter.addDocument(doc);
-      // 文档1
-      doc = new Document();
-      doc.add(new Field("author", "Lily", type));
-      doc.add(new StringField("title", "Care", Field.Store.YES));
-      doc.add(new NumericDocValuesField("sortByNumber", 2));
-      indexWriter.addDocument(doc);
+    // 文档0
+    doc = new Document();
+    doc.add(new StringField("author", "Lily", Field.Store.YES));
+    doc.add(new StringField("title", "care", Field.Store.YES));
+    doc.add(new NumericDocValuesField("age", -2));
+    indexWriter.addDocument(doc);
 
-      // 文档2
-      doc = new Document();
-      doc.add(new Field("author", "Luxugang", type));
-      doc.add(new StringField("title", "whatEver", Field.Store.YES));
-      doc.add(new NumericDocValuesField("sortByNumber", 0));
-      indexWriter.addDocument(doc);
+    // 文档1
+    doc = new Document();
+    doc.add(new Field("author", "Lily", type));
+    doc.add(new StringField("title", "notCare", Field.Store.YES));
+    doc.add(new NumericDocValuesField("age", 2));
+    indexWriter.addDocument(doc);
 
-      indexWriter.deleteDocuments(new Term("author", "Luxugang"));
-
-      indexWriter.commit();
-    }
+    doc = new Document();
+    doc.add(new Field("author", "Lily", type));
+    doc.add(new StringField("title", "totalnotCare", Field.Store.YES));
+    doc.add(new NumericDocValuesField("age", 2));
+    indexWriter.addDocument(doc);
+    // 文档2
+    doc = new Document();
+    doc.add(new StringField("author", "Luxugang", Field.Store.YES));
+    doc.add(new StringField("title", "whatEver", Field.Store.YES));
+    doc.add(new NumericDocValuesField("age", 0));
+    indexWriter.addDocument(doc);
     indexWriter.commit();
-    indexWriter.updateNumericDocValue(new Term("author", "Luxugang"), "sortByNumber", 3);
+
+    DirectoryReader reader = DirectoryReader.open(indexWriter);
+
+    doc = new Document();
+    doc.add(new StringField("author", "Jay", Field.Store.YES));
+    doc.add(new StringField("title", "careFi", Field.Store.YES));
+    doc.add(new NumericDocValuesField("age", 0));
+    indexWriter.addDocument(doc);
+    indexWriter.deleteDocuments(new Term("author", "Lily"));
+
+    reader = DirectoryReader.openIfChanged(reader, indexWriter);
+    IndexCommit indexCommit = reader.getIndexCommit();
 
 
-    DirectoryReader  reader = DirectoryReader.open(indexWriter);
-//      persistentSnapshotDeletionPolicy.snapshot();
-//    Map<String, String> userData = new HashMap<>();
-//    userData.put("1", "abc");
-//    userData.put("2", "efd");
-//    indexWriter.setLiveCommitData(userData.entrySet());
-//    System.out.println(""+Thread.currentThread().getName()+" start to sleep");
-//    Thread.sleep(1000000000);
-//    indexWriter.flush();
+    IndexWriterConfig newConf = new IndexWriterConfig(analyzer);
+    newConf.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+    // IndexCommit中保留的是segment_1文件对应的索引信息，但此时索引目录没有该文件了
+    newConf.setIndexCommit(indexCommit);
+    indexWriter.close();
 
-//    DirectoryReader  reader = DirectoryReader.open(directory);
-//    DirectoryReader  reader = DirectoryReader.open(indexWriter, true, true);
+    // 使用相同的索引目录directory
+    IndexWriter newIndexWriter = new IndexWriter(directory, newConf);
 
-//    reader = DirectoryReader.openIfChanged(reader);
-//    reader = DirectoryReader.openIfChanged(reader);
+    System.out.printf("abc");
 
-    DirectoryReader reader1 = new ExitableDirectoryReader(reader, new QueryTimeoutImpl(2000));
-
-    IndexSearcher searcher = new IndexSearcher(reader1);
-    Query query = new MatchAllDocsQuery();
-
-    SortField sortField  = new SortedNumericSortField("docValuesField", SortField.Type.INT);
-
-    Sort sort = new Sort(sortField);
-
-    ScoreDoc[] scoreDocs = searcher.search(query, 10, sort).scoreDocs;
-    for (int i = 0; i < scoreDocs.length; i++) {
-      ScoreDoc scoreDoc = scoreDocs[i];
-      // 输出满足查询条件的 文档号
-      System.out.println("result"+i+": 文档"+scoreDoc.doc+"");
-    }
-    // Per-top-reader state:
-//
-////   reader = DirectoryReader.openIfChanged(reader);
-
-    System.out.println("hah");
   }
 
   public static String getSamePrefixRandomValue(String prefix){
